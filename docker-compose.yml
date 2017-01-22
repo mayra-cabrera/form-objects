@@ -1,0 +1,52 @@
+version: "2"
+
+volumes:
+  gems:
+    driver: local
+  postgres-data:
+    driver: local
+
+services:
+  db:
+    image: postgres:9.6
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 12341234
+
+  app: &app
+    image: ruby:2.3
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - gems:/usr/local/bundle
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    entrypoint: /usr/src/app/dev-entrypoint.sh
+
+  web:
+    <<: *app
+    command: rails server -b 0.0.0.0 -p 3000 -P /tmp/rails.pid
+    ports:
+      - 3000:3000
+    links:
+      - db
+    environment:
+      DATABASE_URL: "postgres://postgres:12341234@db:5432/form_objects_dev?pool=25&encoding=unicode&schema_search_path=public,partitioning"
+      RAILS_ENV: development
+      RACK_ENV: development
+    env_file:
+      - dev.env
+
+  test:
+    <<: *app
+    environment:
+      DATABASE_URL: "postgres://postgres:12341234@db:5432/form_objects_test?pool=25&encoding=unicode&schema_search_path=public,partitioning"
+      RAILS_ENV: test
+      RACK_ENV: test
+    env_file:
+      - test.env
