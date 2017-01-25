@@ -6,7 +6,6 @@
     <tr>
       <th>ID</th>
       <th>Nombre</th>
-      <th>Apellido</th>
       <th>Compañía</th>
       <th></th>
     </tr>
@@ -16,7 +15,6 @@
       <tr>
         <td><%= link_to user.id, user_path(user) %></td>
         <td><%= user.first_name %></td>
-        <td><%= user.last_name %></td>
         <td><%= user.company.name%></td>
         <td>
           <%= link_to "Editar", edit_user_path(user), class: 'btn btn-default btn-xs' %>
