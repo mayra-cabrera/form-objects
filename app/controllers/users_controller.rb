@@ -5,14 +5,13 @@ class UsersController < ApplicationController
   end
 
   def new
-    @user = User.new
-    @user.build_company
+    @signup = Signup.new
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
-      redirect_to user_path(@user)
+    @signup = Signup.new(signup_params)
+    if @signup.save
+      redirect_to user_path(@signup.user)
     else
       render :new
     end
@@ -24,7 +23,7 @@ class UsersController < ApplicationController
 
   private
 
-  def user_params
-    params.require(:user).permit(:first_name, company_attributes: [:name])
+  def signup_params
+    params.require(:signup).permit(:user_first_name, :company_name)
   end
 end
